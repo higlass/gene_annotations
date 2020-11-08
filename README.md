@@ -16,10 +16,19 @@ Convert to higlass-compatible format using these commands:
 
 ```
 gzcat GCF_000146045.2_R64_genomic.gff.gz \
-	| python ../scripts/gff_to_jsonl.py - \
-	| python ../scripts/gjsonl_to_hgbed.py - > sacCer3.hgbed
-clodius aggregate bedfile --delimiter $`\t' sacCer3.hgbed
+	| python scripts/gff_to_jsonl.py - \
+	| python scripts/gjsonl_to_chromsizes.py - > sacCer3.chrom.sizes
+
+gzcat GCF_000146045.2_R64_genomic.gff.gz \
+	| python scripts/gff_to_jsonl.py - \
+	| python scripts/gjsonl_to_hgbed.py - > sacCer3.hgbed
+
+clodius aggregate bedfile sacCer3.hgbed \
+	--delimiter $`\t' \
+	--chromsizes-filename sacCer3.chrom.sizes
 ```
+
+The `sacCer2.chrom.sizes` file just contains the names of the chromosomes and their sizes.
 
 View in higlass:
 
