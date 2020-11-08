@@ -21,4 +21,11 @@ gzcat GCF_000146045.2_R64_genomic.gff.gz \
 clodius aggregate bedfile --delimiter $`\t' sacCer3.hgbed
 ```
 
+View in higlass:
+
+```
+higlass-manage view sacCer3.hgbed.beddb --datatype gene-annotations
+```
+
 Note that this process omits all RNAs and takes the union of all exons in a gene to represent it as if it were just one transcript.
+
