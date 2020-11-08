@@ -1,6 +1,5 @@
 ## Example
 
 ```
-./scripts/gene_annotations.sh sacCer3 559292 output
-clodius aggregate bedfile --assembly sacCer3 output/sacCer3/geneAnnotationsExonUnions.bed
+gzcat GCF_000146045.2_R64_genomic.gff.gz | python ../scripts/gff_to_jsonl.py - | python ../scripts/gjsonl_to_hgbed.py - > annotations.hgbed
 ```
