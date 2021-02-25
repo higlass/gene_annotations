@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 
 ```
-https://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/genes/danRer10.refGene.gtf.gz
+wget -NP . https://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/genes/danRer10.refGene.gtf.gz
 wget -NP . https://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/danRer10.chrom.sizes
 ```
 
