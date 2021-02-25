@@ -6,7 +6,30 @@ This repository just contains standalone scripts. Make sure to install requireme
 pip install -r requirements.txt
 ```
 
-## Usage by example
+## Example 1: From UCSC GTF file
+
+1. Download the UCSC `gtfToGenePred` binary from http://hgdownload.soe.ucsc.edu/admin/exe/
+
+2. Get the GTF and chromsizes files for an assembly (the `-NP .` parameters ensure that a file isn't downloaded if it's already present)
+
+
+```
+https://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/genes/danRer10.refGene.gtf.gz
+wget -NP . https://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/danRer10.chrom.sizes
+```
+
+3. Convert to higlass-compatible format:
+
+
+```
+cat danRer10.refGene.genepred | python genepredext_to_hgbed.py | python exonU.py - > danRer10.refGene.hgbed
+clodius aggregate bedfile --chromsizes-filename danRer10.chrom.sizes danRer10.refGene.hgbed
+```
+
+4. Use in either HiGlass or Resgen using `filetype:beddb`, `datatype:gene-annotations`.
+
+
+## Example 2: From NCBI GFF
 
 Find the genome information page for sacCer3 at https://www.ncbi.nlm.nih.gov/assembly/GCF_000146045.2/.
 
