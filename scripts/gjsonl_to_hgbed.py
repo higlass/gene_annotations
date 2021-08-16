@@ -9,6 +9,7 @@ import sys
 from typing import Any, Dict, List, Literal, Optional, Union
 
 import pydantic
+from smart_open import open
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -174,8 +175,6 @@ def main():
 
     if args.input_file == "-":
         f = sys.stdin
-    elif args.input_file.endswith(".gz"):
-        f = gzip.open(args.input_file, "r")
     else:
         f = open(args.input_file, "r")
 
