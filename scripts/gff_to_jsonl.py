@@ -3,11 +3,14 @@
 import argparse
 import gzip
 import json
+import logging
 import sys
 from typing import Any, Dict, List, Literal, Optional, Union
 
 import pydantic
 from smart_open import open
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class GFFRecord(pydantic.BaseModel):
@@ -35,8 +38,10 @@ def main():
     )
 
     parser.add_argument("gff")
-    # parser.add_argument('-o', '--options', default='yo',
-    #                    help="Some option", type='str')
+    parser.add_argument(
+        "-s", "--attribute-separator", default="=", help="Some option", type=str
+    )
+
     # parser.add_argument('-u', '--useless', action='store_true',
     #                    help='Another useless option')
 
@@ -49,9 +54,12 @@ def main():
 
     records = {}
 
-    for line in f:
+    for line_num, line in enumerate(f):
         if line.startswith("#"):
             continue
+
+        if line_num % 1000 == 0:
+            logging.info("\rProcessing line #: %d", line_num)
 
         parts = dict(
             zip(
@@ -69,9 +77,22 @@ def main():
                 line.strip().split("\t"),
             )
         )
-        parts["attributes"] = dict(
-            [p.split("=") for p in parts["attributes"].split(";")]
-        )
+
+        try:
+            attributes_array = [
+                [at.strip('"') for at in p.strip().split(args.attribute_separator)]
+                for p in parts["attributes"].strip(";").split(";")
+            ]
+
+            parts["attributes"] = dict(attributes_array)
+        except ValueError as ve:
+            logging.error(
+                "Can't parse attributes. Make sure the --attribute-separator is set correctly."
+            )
+            logging.error("Error text: %s", str(ve))
+            logging.error("attributes_array: %s", str(attributes_array))
+            logging.error("Offending line: %s", line)
+            return
 
         record = GFFRecord(**parts)
         records[record.attributes["ID"]] = record
