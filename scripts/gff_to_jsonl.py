@@ -95,10 +95,17 @@ def main():
             return
 
         record = GFFRecord(**parts)
-        records[record.attributes["ID"]] = record
+        if "ID" in record.attributes:
+            records[record.attributes["ID"]] = record
 
         if "Parent" in record.attributes:
-            records[record.attributes["Parent"]].children.append(record)
+            parent = record.attributes["Parent"]
+
+            if len(parent.split(",")) > 1:
+                parent = parent.split(",")[0]
+
+            parent_rec = records[parent]
+            parent_rec.children.append(record)
 
     top_level_records = [r for r in records.values() if "Parent" not in r.attributes]
     for record in top_level_records:
