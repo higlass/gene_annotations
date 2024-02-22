@@ -23,10 +23,11 @@ class GFFRecord(pydantic.BaseModel):
     strand: Literal["+", "-", "."]
     phase: Union[int, Literal["."]]
     attributes: Dict[str, Any]
+    # children: List[Any] = []
     children: List["GFFRecord"] = []
 
 
-GFFRecord.update_forward_refs()
+# GFFRecord.update_forward_refs()
 
 
 def main():
@@ -55,7 +56,7 @@ def main():
     records = {}
 
     for line_num, line in enumerate(f):
-        if line.startswith("#"):
+        if line.startswith("#") or line.startswith(';'):
             continue
 
         if line_num % 1000 == 0:
@@ -93,7 +94,13 @@ def main():
             logging.error("attributes_array: %s", str(attributes_array))
             logging.error("Offending line: %s", line)
             return
-
+        except KeyError as ke:
+            logging.error(
+                "Can't parse attributes. Make sure the --attribute-separator is set correctly."
+            )
+            logging.error("Offending line: %s", line)
+            return
+        
         record = GFFRecord(**parts)
         if "ID" in record.attributes:
             records[record.attributes["ID"]] = record
